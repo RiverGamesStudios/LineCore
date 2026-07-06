@@ -1,27 +1,33 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # SPDX-FileCopyrightText: Copyright (C) 2026 River Games
 
-KERNELCONFIG ?= menuconfig
+KERNELCONFIG ?= menu
 ARCH = $(shell cat arch.txt)
 
 all:
 	make initial
+	make arch.txt
+	make system
 
-system: sysroot/boot/LineKernel.gz
+system: system-essentials
 
-system-essentials: sysroot/opt/systemdata/LineKernel.gz sysroot/
+system-essentials: sysroot/opt/systemdata/LineKernel.gz sysroot/opt/systemdata/clineb.a
 
 sysroot/opt/systemdata/LineKernel.gz:
 	# GENERATE THIS WITH: `make kernelconfig`
 	make LineKernel/.config
 	cd LineKernel; make ARCH=$(ARCH)
-	cp LineKernel/LineKernel.gz sysroot/boot/LineKernel.gz
+	cp LineKernel/LineKernel.gz sysroot/opt/systemdata/LineKernel.gz
+
+sysroot/opt/systemdata/clineb.a:
+	cd CLineB; make ARCH=$(ARCH) LINEKERNEL_PATH=../LineKernel/
+	cp CLineB/clineb.a sysroot/opt/systemdata/clineb.a
 
 arch-%:
 	echo $* > arch.txt
 
 initial:
-	mkdir -p sysroot sysroot/boot/
+	mkdir -p sysroot sysroot/opt/systemdata
 
 kernelconfig: kernel$(KERNELCONFIG)config
 kernel%config:
@@ -32,4 +38,4 @@ clean:
 	cd CLineB; make clean ARCH=$(ARCH)
 	rm -r sysroot arch.txt
 
-.PHONY: all system arch-% initial kernelconfig kernel%config clean
+.PHONY: all system system-essentials arch-% initial kernelconfig kernel%config clean
