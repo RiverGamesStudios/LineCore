@@ -1,0 +1,6 @@
+[submodule "LineKernel"]
+	path = LineKernel
+	url = https://github.com/RiverGamesStudios/LineKernel.git
+[submodule "CLineB"]
+	path = CLineB
+	url = https://github.com/RiverGamesStudios/CLineB.git
