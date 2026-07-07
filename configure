@@ -1,0 +1,81 @@
+#!/usr/bin/env bash
+DIR=$( dirname -- "${BASH_SOURCE[0]}" )
+
+while [[ $# -gt 0 ]]; do
+	case $1 in
+		--arch)
+			shift
+			arch=$1
+			shift
+			;;
+		--arches)
+			echo "Available arches:"
+			for file in LineArch/*.json; do
+				name="${file##*/}"
+				echo "${name%.json}"
+			done
+			exit 0
+			;;
+		--help)
+			echo "--arch (ARCH) - Architecture"
+			exit 0
+			;;
+		*)
+			echo "Unknown option: $1"
+			exit 1
+			;;
+	esac
+done
+
+generated_files=""
+
+if [ "x$arch" == "x" ]; then
+	echo "No arch specified, see --help"
+	exit 1;
+fi
+
+cat LineArch/$arch.sh 2> /dev/null || { echo "No such arch, see --arches"; exit 1; }
+
+. LineArch/$arch.sh
+
+bincheckfor()
+{
+	local cmd_name="$1"
+	local var_name="$2"
+
+	echo -n "Checking for $cmd_name... "
+
+	local cmd_path
+	cmd_path=$(command -v "$cmd_name")
+
+	if [ -z "$cmd_path" ]; then
+		echo "not found"
+		return 1
+	else
+		echo "$cmd_path"
+		eval "$var_name='$cmd_path'"
+	fi
+}
+
+bincheckfor sed SED
+
+addin()
+{
+	cp $1.in $1
+	generated_files="$generated_files $1"
+	echo "Creating $1..."
+}
+
+replacein()
+{
+	$SED -i "s|@ARCH@|$arch|g" $1
+	$SED -i "s|@CC@|$CC|g" $1
+	$SED -i "s|@AS@|$AS|g" $1
+	$SED -i "s|@AR@|$AR|g" $1
+}
+
+bincheckfor ${CCPREFIX}gcc CC
+bincheckfor ${CCPREFIX}ar AR
+bincheckfor ${CCPREFIX}as AS
+addin Makefile
+replacein Makefile

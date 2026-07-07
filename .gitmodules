@@ -4,3 +4,6 @@
 [submodule "CLineB"]
 	path = CLineB
 	url = https://github.com/RiverGamesStudios/CLineB.git
+[submodule "LineArch"]
+	path = LineArch
+	url = https://github.com/RiverGamesStudios/LineArch.git

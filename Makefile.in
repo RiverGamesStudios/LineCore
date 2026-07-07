@@ -2,7 +2,7 @@
 # SPDX-FileCopyrightText: Copyright (C) 2026 River Games
 
 KERNELCONFIG ?= menu
-ARCH = $(shell cat arch.txt)
+ARCH = @ARCH@
 
 all:
 	make initial
@@ -36,6 +36,9 @@ kernel%config:
 clean:
 	cd LineKernel; make distclean ARCH=$(ARCH)
 	cd CLineB; make clean ARCH=$(ARCH)
-	rm -r sysroot arch.txt
+	rm -r sysroot
 
-.PHONY: all system system-essentials arch-% initial kernelconfig kernel%config clean
+distclean: clean
+	rm Makefile
+
+.PHONY: all system system-essentials arch-% initial kernelconfig kernel%config clean distclean
