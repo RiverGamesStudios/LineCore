@@ -4,29 +4,21 @@
 KERNELCONFIG ?= menu
 ARCH = @ARCH@
 
-all:
-	make initial
-	make arch.txt
-	make system
-
 system: system-essentials
 
 system-essentials: sysroot/opt/systemdata/LineKernel.gz sysroot/opt/systemdata/CLineB.a
 
-sysroot/opt/systemdata/LineKernel.gz:
+sysroot/opt/systemdata/LineKernel.gz: sysroot/
 	# GENERATE THIS WITH: `make kernelconfig`
 	make LineKernel/.config
 	cd LineKernel; make ARCH=$(ARCH)
 	cp LineKernel/LineKernel.gz sysroot/opt/systemdata/LineKernel.gz
 
-sysroot/opt/systemdata/CLineB.a:
+sysroot/opt/systemdata/CLineB.a: sysroot/
 	cd CLineB; make ARCH=$(ARCH) LINEKERNEL_PATH=../LineKernel/
-	cp CLineB/clineb.a sysroot/opt/systemdata/CLineB.a
+	cp CLineB/CLineB.a sysroot/opt/systemdata/CLineB.a
 
-arch-%:
-	echo $* > arch.txt
-
-initial:
+sysroot/:
 	mkdir -p sysroot sysroot/opt/systemdata
 
 kernelconfig: kernel$(KERNELCONFIG)config
@@ -41,4 +33,4 @@ clean:
 distclean: clean
 	rm Makefile
 
-.PHONY: all system system-essentials arch-% initial kernelconfig kernel%config clean distclean
+.PHONY: all system system-essentials kernelconfig kernel%config clean distclean
