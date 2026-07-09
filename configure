@@ -76,8 +76,8 @@ replacein()
 	$SED -i "s|@AR@|$AR|g" $1
 }
 
-bincheckfor ${CCPREFIX}gcc CC
-bincheckfor ${CCPREFIX}ar AR
-bincheckfor ${CCPREFIX}as AS
+bincheckfor ${CCPREFIX}gcc CC || exit 1
+bincheckfor ${CCPREFIX}ar AR || exit 1
+bincheckfor ${CCPREFIX}as AS || exit 1
 addin Makefile
 replacein Makefile
