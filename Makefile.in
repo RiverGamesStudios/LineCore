@@ -28,7 +28,7 @@ kernel%config:
 clean:
 	cd LineKernel; $(MAKE) distclean ARCH=$(ARCH)
 	cd CLineB; $(MAKE) clean ARCH=$(ARCH)
-	rm -r sysroot
+	rm -rf sysroot
 
 distclean: clean
 	rm Makefile

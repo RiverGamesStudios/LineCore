@@ -20,6 +20,7 @@ while [[ $# -gt 0 ]]; do
 			;;
 		--help)
 			echo "--arch (ARCH) - Architecture"
+			echo "--arches - List all available arches"
 			exit 0
 			;;
 		*)
@@ -74,12 +75,10 @@ replacein()
 	$SED -i "s|@CC@|$CC|g" $1
 	$SED -i "s|@AS@|$AS|g" $1
 	$SED -i "s|@AR@|$AR|g" $1
-	$SED -i "s|@MAKE@|$MAKE|g" $1
 }
 
 bincheckfor ${CCPREFIX}gcc CC || exit 1
 bincheckfor ${CCPREFIX}ar AR || exit 1
 bincheckfor ${CCPREFIX}as AS || exit 1
-bincheckfor make MAKE || exit 1
 addin Makefile
 replacein Makefile
